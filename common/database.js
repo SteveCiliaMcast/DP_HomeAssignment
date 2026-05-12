@@ -10,6 +10,7 @@ const readyStateNames = {
 
 async function connectDatabase(serviceName) {
   const mongoUri = getEnv("MONGODB_URI");
+  const dbName = getEnv("MONGODB_DB_NAME");
 
   if (!mongoUri) {
     console.log(`${serviceName}: MONGODB_URI not set; database connection skipped`);
@@ -21,8 +22,10 @@ async function connectDatabase(serviceName) {
   }
 
   try {
-    await mongoose.connect(mongoUri);
-    console.log(`${serviceName}: MongoDB connected`);
+    await mongoose.connect(mongoUri, dbName ? { dbName } : undefined);
+    console.log(
+      `${serviceName}: MongoDB connected${dbName ? ` to database ${dbName}` : ""}`
+    );
     return mongoose.connection;
   } catch (error) {
     console.error(`${serviceName}: MongoDB connection failed - ${error.message}`);
@@ -34,7 +37,12 @@ function getDatabaseStatus() {
   return readyStateNames[mongoose.connection.readyState] || "unknown";
 }
 
+function isDatabaseConnected() {
+  return mongoose.connection.readyState === 1;
+}
+
 module.exports = {
   connectDatabase,
-  getDatabaseStatus
+  getDatabaseStatus,
+  isDatabaseConnected
 };

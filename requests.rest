@@ -15,3 +15,54 @@ GET http://localhost:5104/health
 
 ### Location service health
 GET http://localhost:5105/health
+
+### Register customer
+POST http://localhost:5101/customers/register
+Content-Type: application/json
+
+{
+  "firstName": "Test",
+  "surname": "Customer",
+  "email": "test.customer@example.com",
+  "password": "Password123"
+}
+
+### Login customer
+POST http://localhost:5101/customers/login
+Content-Type: application/json
+
+{
+  "email": "test.customer@example.com",
+  "password": "Password123"
+}
+
+### Get customer details
+GET http://localhost:5101/customers/6a031f55291fb0c724fa220b
+
+### Create notification
+POST http://localhost:5101/customers/6a031f55291fb0c724fa220b/notifications
+Content-Type: application/json
+
+{
+  "type": "CAB_READY",
+  "title": "Cab ready",
+  "message": "Your cab is ready for pickup.",
+  "metadata": {
+    "bookingId": "demo-booking-id",
+    "cabType": "Economic"
+  }
+}
+
+### Get customer notifications
+GET http://localhost:5101/customers/6a031f55291fb0c724fa220b/notifications
+
+### Mark notification as read
+PATCH http://localhost:5101/customers/6a031f55291fb0c724fa220b/notifications/6a031f7c291fb0c724fa2211/read
+
+### Increment successful booking count
+PATCH http://localhost:5101/customers/6a031f55291fb0c724fa220b/booking-count
+Content-Type: application/json
+
+{
+  "incrementBy": 1
+}

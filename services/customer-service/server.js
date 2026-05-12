@@ -5,6 +5,7 @@ const { getPort } = require("../../common/config");
 const { connectDatabase } = require("../../common/database");
 const { sendSuccess } = require("../../common/responses");
 const { startServer } = require("../../common/server");
+const customerRoutes = require("./routes/customerRoutes");
 
 const serviceName = "customer-service";
 const app = createServiceApp(serviceName);
@@ -15,6 +16,8 @@ app.get("/", (req, res) => {
     message: "Customer service is ready"
   });
 });
+
+app.use("/customers", customerRoutes);
 
 registerErrorHandlers(app);
 
