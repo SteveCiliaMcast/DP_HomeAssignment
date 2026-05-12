@@ -1,0 +1,30 @@
+{
+  "name": "cab-booking-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Distributed Programming cab booking platform using Node.js microservices.",
+  "main": "api-gateway/server.js",
+  "scripts": {
+    "start": "npm run start:apis",
+    "start:apis": "concurrently --kill-others-on-fail --names gateway,customer,booking,payment,fare,location \"npm run start:gateway\" \"npm run start:customer\" \"npm run start:booking\" \"npm run start:payment\" \"npm run start:fare\" \"npm run start:location\"",
+    "start:gateway": "node api-gateway/server.js",
+    "start:customer": "node services/customer-service/server.js",
+    "start:booking": "node services/booking-service/server.js",
+    "start:payment": "node services/payment-service/server.js",
+    "start:fare": "node services/fare-service/server.js",
+    "start:location": "node services/location-service/server.js",
+    "health:gateway": "node -e \"fetch('http://localhost:5100/health').then(r=>r.json()).then(console.log)\""
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

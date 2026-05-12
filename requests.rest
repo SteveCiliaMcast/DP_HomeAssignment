@@ -1,0 +1,17 @@
+### Gateway health
+GET http://localhost:5100/health
+
+### Customer service health
+GET http://localhost:5101/health
+
+### Booking service health
+GET http://localhost:5102/health
+
+### Payment service health
+GET http://localhost:5103/health
+
+### Fare service health
+GET http://localhost:5104/health
+
+### Location service health
+GET http://localhost:5105/health
