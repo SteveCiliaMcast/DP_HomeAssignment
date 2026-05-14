@@ -7,7 +7,18 @@ Content-Type: application/json
 
 {
   "userId": "REPLACE_WITH_USER_ID",
-  "bookingId": "REPLACE_WITH_BOOKING_ID"
+  "bookingId": "REPLACE_WITH_BOOKING_ID",
+  "useDiscount": true
+}
+
+### Pay for booking without using an available discount
+POST http://localhost:5103/payments
+Content-Type: application/json
+
+{
+  "userId": "REPLACE_WITH_USER_ID",
+  "bookingId": "REPLACE_WITH_BOOKING_ID",
+  "useDiscount": false
 }
 
 ### Get payment by ID

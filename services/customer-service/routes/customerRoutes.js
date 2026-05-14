@@ -341,10 +341,36 @@ router.patch(
 
     user.successfulBookingsCount += incrementBy;
 
-    if (user.successfulBookingsCount >= 3) {
+    if (user.successfulBookingsCount >= 3 && !user.discountNotificationSent) {
       user.discountAvailable = true;
     }
 
+    await user.save();
+
+    return sendSuccess(res, toPublicUser(user));
+  })
+);
+
+router.patch(
+  "/:userId/discount/consume",
+  asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+
+    if (!isValidObjectId(userId)) {
+      return sendError(res, 400, "Invalid user ID");
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return sendError(res, 404, "User not found");
+    }
+
+    if (!user.discountAvailable) {
+      return sendError(res, 400, "No discount is available for this user");
+    }
+
+    user.discountAvailable = false;
     await user.save();
 
     return sendSuccess(res, toPublicUser(user));

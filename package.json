@@ -13,6 +13,8 @@
     "start:payment": "node services/payment-service/server.js",
     "start:fare": "node services/fare-service/server.js",
     "start:location": "node services/location-service/server.js",
+    "start:web": "npm --prefix web-app run dev",
+    "build:web": "npm --prefix web-app run build",
     "health:gateway": "node -e \"fetch('http://localhost:5100/health').then(r=>r.json()).then(console.log)\""
   },
   "dependencies": {

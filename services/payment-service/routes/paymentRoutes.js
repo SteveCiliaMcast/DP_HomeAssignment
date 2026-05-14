@@ -160,12 +160,22 @@ async function createDiscountNotificationIfAvailable(userId) {
   );
 }
 
-function calculatePayment(booking, customer) {
+async function consumeCustomerDiscount(userId) {
+  const { customerServiceUrl } = getServiceUrls();
+
+  return axios.patch(
+    `${customerServiceUrl}/customers/${userId}/discount/consume`,
+    {},
+    { timeout: 10000 }
+  );
+}
+
+function calculatePayment(booking, customer, useDiscount) {
   const cabFare = Number(booking.estimatedFare?.amount);
   const cabMultiplier = getCabMultiplier(booking.cabType);
   const daytimeMultiplier = getDaytimeMultiplier(booking.bookingDateTime);
   const passengersMultiplier = getPassengersMultiplier(Number(booking.passengers));
-  const discountMultiplier = customer.discountAvailable ? 0.9 : 1;
+  const discountMultiplier = customer.discountAvailable && useDiscount ? 0.9 : 1;
 
   if (!Number.isFinite(cabFare) || cabFare < 0) {
     return { error: "Booking does not have a valid estimated fare" };
@@ -210,6 +220,7 @@ router.post(
 
     const userId = String(req.body.userId).trim();
     const bookingId = String(req.body.bookingId).trim();
+    const useDiscount = req.body.useDiscount !== false;
 
     if (!isValidObjectId(userId) || !isValidObjectId(bookingId)) {
       return sendError(res, 400, "Invalid user ID or booking ID");
@@ -257,7 +268,7 @@ router.post(
       });
     }
 
-    const paymentCalculation = calculatePayment(booking, customerResult.customer);
+    const paymentCalculation = calculatePayment(booking, customerResult.customer, useDiscount);
 
     if (paymentCalculation.error) {
       return sendError(res, 400, paymentCalculation.error);
@@ -274,6 +285,9 @@ router.post(
       await updateBookingStatus(bookingId, "completed");
       await incrementCustomerBookingCount(userId);
       await createDiscountNotificationIfAvailable(userId);
+      if (paymentCalculation.discountMultiplier < 1) {
+        await consumeCustomerDiscount(userId);
+      }
     } catch (error) {
       return sendError(res, 502, "Payment saved but downstream update failed", {
         payment: toPublicPayment(payment),
