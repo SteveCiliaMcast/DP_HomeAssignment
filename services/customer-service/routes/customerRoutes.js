@@ -232,6 +232,62 @@ router.post(
   })
 );
 
+router.post(
+  "/:userId/notifications/discount",
+  asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+
+    if (!isValidObjectId(userId)) {
+      return sendError(res, 400, "Invalid user ID");
+    }
+
+    const user = await User.findOneAndUpdate(
+      {
+        _id: userId,
+        successfulBookingsCount: { $gte: 3 },
+        discountNotificationSent: false
+      },
+      {
+        discountAvailable: true,
+        discountNotificationSent: true
+      },
+      {
+        new: true
+      }
+    );
+
+    if (!user) {
+      const existingUser = await User.findById(userId);
+
+      if (!existingUser) {
+        return sendError(res, 404, "User not found");
+      }
+
+      return sendSuccess(res, {
+        created: false,
+        user: toPublicUser(existingUser)
+      });
+    }
+
+    const notification = await Notification.create({
+      userId,
+      type: "DISCOUNT_AVAILABLE",
+      title: "Discount available",
+      message: "You have completed three successful bookings. A discount is now available for your next rides.",
+      metadata: {
+        successfulBookingsCount: user.successfulBookingsCount,
+        discountMultiplier: 0.9
+      }
+    });
+
+    return sendSuccess(res, {
+      created: true,
+      user: toPublicUser(user),
+      notification: toPublicNotification(notification)
+    }, 201);
+  })
+);
+
 router.patch(
   "/:userId/notifications/:notificationId/read",
   asyncHandler(async (req, res) => {

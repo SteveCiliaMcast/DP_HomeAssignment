@@ -150,6 +150,16 @@ async function incrementCustomerBookingCount(userId) {
   );
 }
 
+async function createDiscountNotificationIfAvailable(userId) {
+  const { customerServiceUrl } = getServiceUrls();
+
+  return axios.post(
+    `${customerServiceUrl}/customers/${userId}/notifications/discount`,
+    {},
+    { timeout: 10000 }
+  );
+}
+
 function calculatePayment(booking, customer) {
   const cabFare = Number(booking.estimatedFare?.amount);
   const cabMultiplier = getCabMultiplier(booking.cabType);
@@ -263,6 +273,7 @@ router.post(
     try {
       await updateBookingStatus(bookingId, "completed");
       await incrementCustomerBookingCount(userId);
+      await createDiscountNotificationIfAvailable(userId);
     } catch (error) {
       return sendError(res, 502, "Payment saved but downstream update failed", {
         payment: toPublicPayment(payment),

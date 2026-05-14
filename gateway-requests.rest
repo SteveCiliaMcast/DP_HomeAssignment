@@ -1,0 +1,92 @@
+@gatewayUrl = http://localhost:5100
+@testEmail = gateway.flow@example.com
+@password = Password123
+
+### Gateway health
+GET {{gatewayUrl}}/health
+
+### Gateway root
+GET {{gatewayUrl}}/
+
+### Register customer through gateway
+# @name registerCustomer
+POST {{gatewayUrl}}/api/customers/register
+Content-Type: application/json
+
+{
+  "firstName": "Gateway",
+  "surname": "Tester",
+  "email": "{{testEmail}}",
+  "password": "{{password}}"
+}
+
+### Login customer through gateway
+# @name loginCustomer
+POST {{gatewayUrl}}/api/customers/login
+Content-Type: application/json
+
+{
+  "email": "{{testEmail}}",
+  "password": "{{password}}"
+}
+
+### Estimate fare through gateway
+POST {{gatewayUrl}}/api/fares/estimate
+Content-Type: application/json
+
+{
+  "startingLocation": "Valletta",
+  "endingLocation": "Sliema"
+}
+
+### Create booking through gateway
+# @name createBooking
+POST {{gatewayUrl}}/api/bookings
+Content-Type: application/json
+
+{
+  "userId": "{{registerCustomer.response.body.$.data.userId}}",
+  "startingLocation": "Valletta",
+  "endingLocation": "Sliema",
+  "bookingDateTime": "2026-06-07T18:30:00.000Z",
+  "passengers": 2,
+  "cabType": "Premium"
+}
+
+### Pay booking through gateway
+# @name createPayment
+POST {{gatewayUrl}}/api/payments
+Content-Type: application/json
+
+{
+  "userId": "{{registerCustomer.response.body.$.data.userId}}",
+  "bookingId": "{{createBooking.response.body.$.data.bookingId}}"
+}
+
+### Get payment through gateway
+GET {{gatewayUrl}}/api/payments/{{createPayment.response.body.$.data.paymentId}}
+
+### Get customer bookings through gateway
+GET {{gatewayUrl}}/api/bookings/past/{{registerCustomer.response.body.$.data.userId}}
+
+### Add favourite location through gateway
+# @name addLocation
+POST {{gatewayUrl}}/api/locations
+Content-Type: application/json
+
+{
+  "userId": "{{registerCustomer.response.body.$.data.userId}}",
+  "label": "Home",
+  "address": "Valletta",
+  "latitude": 35.8989,
+  "longitude": 14.5146
+}
+
+### Get favourite locations through gateway
+GET {{gatewayUrl}}/api/locations/user/{{registerCustomer.response.body.$.data.userId}}
+
+### Get location weather through gateway
+GET {{gatewayUrl}}/api/locations/{{addLocation.response.body.$.data.locationId}}/weather
+
+### Get customer notifications through gateway
+GET {{gatewayUrl}}/api/customers/{{registerCustomer.response.body.$.data.userId}}/notifications

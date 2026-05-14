@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const mongoose = require("mongoose");
 
-const { getServiceUrls } = require("../../../common/config");
+const { getEnv, getServiceUrls } = require("../../../common/config");
 const { isDatabaseConnected } = require("../../../common/database");
 const { asyncHandler, sendError, sendSuccess } = require("../../../common/responses");
 const { getMissingFields } = require("../../../common/validation");
@@ -121,6 +121,50 @@ function parseBookingDateTime(value) {
   return date;
 }
 
+function getCabReadyDelayMs() {
+  const delay = Number(getEnv("CAB_READY_DELAY_MS", 180000));
+
+  if (!Number.isFinite(delay) || delay < 0) {
+    return 180000;
+  }
+
+  return delay;
+}
+
+function scheduleCabReadyNotification(booking) {
+  const { customerServiceUrl } = getServiceUrls();
+  const delayMs = getCabReadyDelayMs();
+  const publicBooking = toPublicBooking(booking);
+
+  setTimeout(async () => {
+    try {
+      await axios.post(
+        `${customerServiceUrl}/customers/${publicBooking.userId}/notifications`,
+        {
+          type: "CAB_READY",
+          title: "Cab ready for pickup",
+          message: `Your ${publicBooking.cabType} cab from ${publicBooking.startingLocation} to ${publicBooking.endingLocation} is ready for pickup.`,
+          metadata: {
+            bookingId: publicBooking.bookingId,
+            startingLocation: publicBooking.startingLocation,
+            endingLocation: publicBooking.endingLocation,
+            bookingDateTime: publicBooking.bookingDateTime,
+            passengers: publicBooking.passengers,
+            cabType: publicBooking.cabType
+          }
+        },
+        {
+          timeout: 10000
+        }
+      );
+    } catch (error) {
+      console.error(
+        `booking-service: failed to create cab-ready notification for booking ${publicBooking.bookingId} - ${error.message}`
+      );
+    }
+  }, delayMs);
+}
+
 router.use(requireDatabase);
 
 router.post(
@@ -189,6 +233,8 @@ router.post(
       cabType,
       estimatedFare
     });
+
+    scheduleCabReadyNotification(booking);
 
     return sendSuccess(res, toPublicBooking(booking), 201);
   })

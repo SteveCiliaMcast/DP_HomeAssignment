@@ -1,0 +1,108 @@
+@customerServiceUrl = http://localhost:5101
+@bookingServiceUrl = http://localhost:5102
+@fareServiceUrl = http://localhost:5104
+@paymentServiceUrl = http://localhost:5103
+@testEmail = phase8.events@example.com
+@password = Password123
+
+### 1. Customer service health
+GET {{customerServiceUrl}}/health
+
+### 2. Booking service health
+GET {{bookingServiceUrl}}/health
+
+### 3. Fare service health
+GET {{fareServiceUrl}}/health
+
+### 4. Payment service health
+GET {{paymentServiceUrl}}/health
+
+### 5. Register customer
+# @name registerCustomer
+POST {{customerServiceUrl}}/customers/register
+Content-Type: application/json
+
+{
+  "firstName": "Event",
+  "surname": "Tester",
+  "email": "{{testEmail}}",
+  "password": "{{password}}"
+}
+
+### 6. Create first booking
+# @name createBookingOne
+POST {{bookingServiceUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": "{{registerCustomer.response.body.$.data.userId}}",
+  "startingLocation": "Valletta",
+  "endingLocation": "Sliema",
+  "bookingDateTime": "2026-06-04T18:30:00.000Z",
+  "passengers": 2,
+  "cabType": "Economic"
+}
+
+### 7. Pay first booking
+POST {{paymentServiceUrl}}/payments
+Content-Type: application/json
+
+{
+  "userId": "{{registerCustomer.response.body.$.data.userId}}",
+  "bookingId": "{{createBookingOne.response.body.$.data.bookingId}}"
+}
+
+### 8. Create second booking
+# @name createBookingTwo
+POST {{bookingServiceUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": "{{registerCustomer.response.body.$.data.userId}}",
+  "startingLocation": "Valletta",
+  "endingLocation": "Mdina",
+  "bookingDateTime": "2026-06-05T18:30:00.000Z",
+  "passengers": 2,
+  "cabType": "Premium"
+}
+
+### 9. Pay second booking
+POST {{paymentServiceUrl}}/payments
+Content-Type: application/json
+
+{
+  "userId": "{{registerCustomer.response.body.$.data.userId}}",
+  "bookingId": "{{createBookingTwo.response.body.$.data.bookingId}}"
+}
+
+### 10. Create third booking
+# @name createBookingThree
+POST {{bookingServiceUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": "{{registerCustomer.response.body.$.data.userId}}",
+  "startingLocation": "Sliema",
+  "endingLocation": "Valletta",
+  "bookingDateTime": "2026-06-06T18:30:00.000Z",
+  "passengers": 2,
+  "cabType": "Executive"
+}
+
+### 11. Pay third booking. This should trigger the one-time discount notification.
+POST {{paymentServiceUrl}}/payments
+Content-Type: application/json
+
+{
+  "userId": "{{registerCustomer.response.body.$.data.userId}}",
+  "bookingId": "{{createBookingThree.response.body.$.data.bookingId}}"
+}
+
+### 12. Check customer after three paid bookings
+GET {{customerServiceUrl}}/customers/{{registerCustomer.response.body.$.data.userId}}
+
+### 13. Check notifications after three paid bookings
+GET {{customerServiceUrl}}/customers/{{registerCustomer.response.body.$.data.userId}}/notifications
+
+### 14. Wait for CAB_READY_DELAY_MS, then run this again to see cab-ready notifications
+GET {{customerServiceUrl}}/customers/{{registerCustomer.response.body.$.data.userId}}/notifications
