@@ -1,0 +1,80 @@
+@customerServiceUrl = http://localhost:5101
+@locationServiceUrl = http://localhost:5105
+@testEmail = phase7.location@example.com
+@password = Password123
+
+### 1. Customer service health
+GET {{customerServiceUrl}}/health
+
+### 2. Location service health
+GET {{locationServiceUrl}}/health
+
+### 3. Register customer
+# @name registerCustomer
+POST {{customerServiceUrl}}/customers/register
+Content-Type: application/json
+
+{
+  "firstName": "Location",
+  "surname": "Tester",
+  "email": "{{testEmail}}",
+  "password": "{{password}}"
+}
+
+### 4. Login customer
+# @name loginCustomer
+POST {{customerServiceUrl}}/customers/login
+Content-Type: application/json
+
+{
+  "email": "{{testEmail}}",
+  "password": "{{password}}"
+}
+
+### 5. Add favourite pickup location
+# @name addLocation
+POST {{locationServiceUrl}}/locations
+Content-Type: application/json
+
+{
+  "userId": "{{registerCustomer.response.body.$.data.userId}}",
+  "label": "Home",
+  "address": "Valletta",
+  "latitude": 35.8989,
+  "longitude": 14.5146
+}
+
+### 6. Get user favourite pickup locations
+GET {{locationServiceUrl}}/locations/user/{{registerCustomer.response.body.$.data.userId}}
+
+### 7. Update favourite pickup location
+PUT {{locationServiceUrl}}/locations/{{addLocation.response.body.$.data.locationId}}
+Content-Type: application/json
+
+{
+  "label": "Work",
+  "address": "Sliema",
+  "latitude": 35.9122,
+  "longitude": 14.5042
+}
+
+### 8. Get weather for favourite pickup location
+GET {{locationServiceUrl}}/locations/{{addLocation.response.body.$.data.locationId}}/weather
+
+### 9. Delete favourite pickup location
+DELETE {{locationServiceUrl}}/locations/{{addLocation.response.body.$.data.locationId}}
+
+### 10. Deleted location weather should fail
+GET {{locationServiceUrl}}/locations/{{addLocation.response.body.$.data.locationId}}/weather
+
+### 11. Invalid user ID validation
+POST {{locationServiceUrl}}/locations
+Content-Type: application/json
+
+{
+  "userId": "invalid",
+  "label": "Bad",
+  "address": "Nowhere",
+  "latitude": 120,
+  "longitude": 14.5146
+}

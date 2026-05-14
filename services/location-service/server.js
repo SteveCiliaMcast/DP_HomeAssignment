@@ -5,6 +5,7 @@ const { getPort } = require("../../common/config");
 const { connectDatabase } = require("../../common/database");
 const { sendSuccess } = require("../../common/responses");
 const { startServer } = require("../../common/server");
+const locationRoutes = require("./routes/locationRoutes");
 
 const serviceName = "location-service";
 const app = createServiceApp(serviceName);
@@ -15,6 +16,8 @@ app.get("/", (req, res) => {
     message: "Location service is ready"
   });
 });
+
+app.use("/locations", locationRoutes);
 
 registerErrorHandlers(app);
 

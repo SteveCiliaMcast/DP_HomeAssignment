@@ -1,0 +1,35 @@
+### Location service health
+GET http://localhost:5105/health
+
+### Add favourite pickup location
+# @name addLocation
+POST http://localhost:5105/locations
+Content-Type: application/json
+
+{
+  "userId": "REPLACE_WITH_USER_ID",
+  "label": "Home",
+  "address": "Valletta",
+  "latitude": 35.8989,
+  "longitude": 14.5146
+}
+
+### Get user favourite pickup locations
+GET http://localhost:5105/locations/user/REPLACE_WITH_USER_ID
+
+### Update favourite pickup location
+PUT http://localhost:5105/locations/REPLACE_WITH_LOCATION_ID
+Content-Type: application/json
+
+{
+  "label": "Work",
+  "address": "Sliema",
+  "latitude": 35.9122,
+  "longitude": 14.5042
+}
+
+### Get weather for favourite pickup location
+GET http://localhost:5105/locations/REPLACE_WITH_LOCATION_ID/weather
+
+### Delete favourite pickup location
+DELETE http://localhost:5105/locations/REPLACE_WITH_LOCATION_ID
