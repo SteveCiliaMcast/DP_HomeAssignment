@@ -1,0 +1,25 @@
+### Payment service health
+GET http://localhost:5103/health
+
+### Pay for booking
+POST http://localhost:5103/payments
+Content-Type: application/json
+
+{
+  "userId": "REPLACE_WITH_USER_ID",
+  "bookingId": "REPLACE_WITH_BOOKING_ID"
+}
+
+### Get payment by ID
+GET http://localhost:5103/payments/REPLACE_WITH_PAYMENT_ID
+
+### Get user payment history
+GET http://localhost:5103/payments/user/REPLACE_WITH_USER_ID
+
+### Missing fields validation
+POST http://localhost:5103/payments
+Content-Type: application/json
+
+{
+  "userId": "REPLACE_WITH_USER_ID"
+}
