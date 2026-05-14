@@ -5,6 +5,7 @@ const { getPort } = require("../../common/config");
 const { connectDatabase } = require("../../common/database");
 const { sendSuccess } = require("../../common/responses");
 const { startServer } = require("../../common/server");
+const fareRoutes = require("./routes/fareRoutes");
 
 const serviceName = "fare-service";
 const app = createServiceApp(serviceName);
@@ -15,6 +16,8 @@ app.get("/", (req, res) => {
     message: "Fare estimation service is ready"
   });
 });
+
+app.use("/fares", fareRoutes);
 
 registerErrorHandlers(app);
 

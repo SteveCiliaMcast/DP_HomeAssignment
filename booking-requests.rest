@@ -1,0 +1,40 @@
+### Booking service health
+GET http://localhost:5102/health
+
+### Create booking
+POST http://localhost:5102/bookings
+Content-Type: application/json
+
+{
+  "userId": "6a031f55291fb0c724fa220b",
+  "startingLocation": "Valletta",
+  "endingLocation": "Sliema",
+  "bookingDateTime": "2026-06-01T18:30:00.000Z",
+  "passengers": 2,
+  "cabType": "Economic"
+}
+
+### Get current bookings
+GET http://localhost:5102/bookings/current/6a031f55291fb0c724fa220b
+
+### Get past bookings
+GET http://localhost:5102/bookings/past/6a031f55291fb0c724fa220b
+
+### Get booking by ID
+GET http://localhost:5102/bookings/6a032b30963be502c4f938b2
+
+### Mark booking as completed
+PATCH http://localhost:5102/bookings/6a032b30963be502c4f938b2/status
+Content-Type: application/json
+
+{
+  "status": "completed"
+}
+
+### Cancel booking
+PATCH http://localhost:5102/bookings/6a032b30963be502c4f938b2/status
+Content-Type: application/json
+
+{
+  "status": "cancelled"
+}

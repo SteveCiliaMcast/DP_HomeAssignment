@@ -5,6 +5,7 @@ const { getPort } = require("../../common/config");
 const { connectDatabase } = require("../../common/database");
 const { sendSuccess } = require("../../common/responses");
 const { startServer } = require("../../common/server");
+const bookingRoutes = require("./routes/bookingRoutes");
 
 const serviceName = "booking-service";
 const app = createServiceApp(serviceName);
@@ -12,9 +13,11 @@ const port = getPort("BOOKING_SERVICE_PORT", 5102);
 
 app.get("/", (req, res) => {
   return sendSuccess(res, {
-    message: "Booking service is ready"
+    message: "Booking service is ready test"
   });
 });
+
+app.use("/bookings", bookingRoutes);
 
 registerErrorHandlers(app);
 

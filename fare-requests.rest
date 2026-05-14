@@ -1,0 +1,41 @@
+### Fare service health
+GET http://localhost:5104/health
+
+### Estimate fare
+POST http://localhost:5104/fares/estimate
+Content-Type: application/json
+
+{
+  "startingLocation": "Valletta",
+  "endingLocation": "Marsa"
+}
+
+### Estimate fare with RapidAPI coordinates
+POST http://localhost:5104/fares/estimate
+Content-Type: application/json
+
+{
+  "startingLocation": "Berlin pickup",
+  "endingLocation": "Berlin destination",
+  "depLat": 52.50,
+  "depLng": 13.43,
+  "arrLat": 52.47,
+  "arrLng": 13.63
+}
+
+### Missing destination validation
+POST http://localhost:5104/fares/estimate
+Content-Type: application/json
+
+{
+  "startingLocation": "Valletta"
+}
+
+### Same location validation
+POST http://localhost:5104/fares/estimate
+Content-Type: application/json
+
+{
+  "startingLocation": "Valletta",
+  "endingLocation": "Valletta"
+}
