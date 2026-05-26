@@ -20,18 +20,35 @@ function getPort(name, fallback) {
   return value;
 }
 
+function getServicePort(name, fallback) {
+  return getPort(name, getEnv("PORT", fallback));
+}
+
+function normalizeServiceUrl(value) {
+  if (!value) {
+    return value;
+  }
+
+  if (/^https?:\/\//i.test(value)) {
+    return value;
+  }
+
+  return `http://${value}`;
+}
+
 function getServiceUrls() {
   return {
-    customerServiceUrl: getEnv("CUSTOMER_SERVICE_URL", "http://localhost:5101"),
-    bookingServiceUrl: getEnv("BOOKING_SERVICE_URL", "http://localhost:5102"),
-    paymentServiceUrl: getEnv("PAYMENT_SERVICE_URL", "http://localhost:5103"),
-    fareServiceUrl: getEnv("FARE_SERVICE_URL", "http://localhost:5104"),
-    locationServiceUrl: getEnv("LOCATION_SERVICE_URL", "http://localhost:5105")
+    customerServiceUrl: normalizeServiceUrl(getEnv("CUSTOMER_SERVICE_URL", "http://localhost:5101")),
+    bookingServiceUrl: normalizeServiceUrl(getEnv("BOOKING_SERVICE_URL", "http://localhost:5102")),
+    paymentServiceUrl: normalizeServiceUrl(getEnv("PAYMENT_SERVICE_URL", "http://localhost:5103")),
+    fareServiceUrl: normalizeServiceUrl(getEnv("FARE_SERVICE_URL", "http://localhost:5104")),
+    locationServiceUrl: normalizeServiceUrl(getEnv("LOCATION_SERVICE_URL", "http://localhost:5105"))
   };
 }
 
 module.exports = {
   getEnv,
   getPort,
+  getServicePort,
   getServiceUrls
 };

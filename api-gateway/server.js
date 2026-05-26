@@ -2,14 +2,14 @@ require("../common/config");
 
 const axios = require("axios");
 const { createServiceApp, registerErrorHandlers } = require("../common/app");
-const { getPort, getServiceUrls } = require("../common/config");
+const { getServicePort, getServiceUrls } = require("../common/config");
 const { connectDatabase } = require("../common/database");
 const { asyncHandler, sendError, sendSuccess } = require("../common/responses");
 const { startServer } = require("../common/server");
 
 const serviceName = "api-gateway";
 const app = createServiceApp(serviceName);
-const port = getPort("GATEWAY_PORT", 5100);
+const port = getServicePort("GATEWAY_PORT", 5100);
 
 app.get("/", (req, res) => {
   return sendSuccess(res, {

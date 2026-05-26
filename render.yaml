@@ -1,0 +1,143 @@
+services:
+  - type: web
+    name: cab-customer-service
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run start:customer
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB_NAME
+        value: Cab_booking_Assignment
+      - key: JWT_SECRET
+        generateValue: true
+
+  - type: web
+    name: cab-fare-service
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run start:fare
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: RAPIDAPI_KEY
+        sync: false
+      - key: TAXI_FARE_API_HOST
+        value: taxi-fare-calculator.p.rapidapi.com
+      - key: TAXI_FARE_API_BASE_URL
+        value: https://taxi-fare-calculator.p.rapidapi.com
+
+  - type: web
+    name: cab-booking-service
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run start:booking
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB_NAME
+        value: Cab_booking_Assignment
+      - key: CUSTOMER_SERVICE_URL
+        fromService:
+          type: web
+          name: cab-customer-service
+          property: hostport
+      - key: FARE_SERVICE_URL
+        fromService:
+          type: web
+          name: cab-fare-service
+          property: hostport
+      - key: CAB_READY_DELAY_MS
+        value: 180000
+
+  - type: web
+    name: cab-payment-service
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run start:payment
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB_NAME
+        value: Cab_booking_Assignment
+      - key: CUSTOMER_SERVICE_URL
+        fromService:
+          type: web
+          name: cab-customer-service
+          property: hostport
+      - key: BOOKING_SERVICE_URL
+        fromService:
+          type: web
+          name: cab-booking-service
+          property: hostport
+
+  - type: web
+    name: cab-location-service
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run start:location
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB_NAME
+        value: Cab_booking_Assignment
+      - key: RAPIDAPI_KEY
+        sync: false
+      - key: WEATHER_API_HOST
+        value: weatherapi-com.p.rapidapi.com
+      - key: WEATHER_API_BASE_URL
+        value: https://weatherapi-com.p.rapidapi.com
+
+  - type: web
+    name: cab-api-gateway
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run start:gateway
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CUSTOMER_SERVICE_URL
+        fromService:
+          type: web
+          name: cab-customer-service
+          property: hostport
+      - key: BOOKING_SERVICE_URL
+        fromService:
+          type: web
+          name: cab-booking-service
+          property: hostport
+      - key: PAYMENT_SERVICE_URL
+        fromService:
+          type: web
+          name: cab-payment-service
+          property: hostport
+      - key: FARE_SERVICE_URL
+        fromService:
+          type: web
+          name: cab-fare-service
+          property: hostport
+      - key: LOCATION_SERVICE_URL
+        fromService:
+          type: web
+          name: cab-location-service
+          property: hostport

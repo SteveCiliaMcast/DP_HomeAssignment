@@ -4,6 +4,9 @@
   "private": true,
   "description": "Distributed Programming cab booking platform using Node.js microservices.",
   "main": "api-gateway/server.js",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "start": "npm run start:apis",
     "start:apis": "concurrently --kill-others-on-fail --names gateway,customer,booking,payment,fare,location \"npm run start:gateway\" \"npm run start:customer\" \"npm run start:booking\" \"npm run start:payment\" \"npm run start:fare\" \"npm run start:location\"",

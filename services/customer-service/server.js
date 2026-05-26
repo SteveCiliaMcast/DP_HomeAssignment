@@ -1,7 +1,7 @@
 require("../../common/config");
 
 const { createServiceApp, registerErrorHandlers } = require("../../common/app");
-const { getPort } = require("../../common/config");
+const { getServicePort } = require("../../common/config");
 const { connectDatabase } = require("../../common/database");
 const { sendSuccess } = require("../../common/responses");
 const { startServer } = require("../../common/server");
@@ -9,7 +9,7 @@ const customerRoutes = require("./routes/customerRoutes");
 
 const serviceName = "customer-service";
 const app = createServiceApp(serviceName);
-const port = getPort("CUSTOMER_SERVICE_PORT", 5101);
+const port = getServicePort("CUSTOMER_SERVICE_PORT", 5101);
 
 app.get("/", (req, res) => {
   return sendSuccess(res, {
