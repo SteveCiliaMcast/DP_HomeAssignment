@@ -99,6 +99,11 @@ services:
         sync: false
       - key: MONGODB_DB_NAME
         value: Cab_booking_Assignment
+      - key: CUSTOMER_SERVICE_URL
+        fromService:
+          type: web
+          name: cab-customer-service
+          property: hostport
       - key: RAPIDAPI_KEY
         sync: false
       - key: WEATHER_API_HOST
