@@ -18,7 +18,8 @@
     "start:location": "node services/location-service/server.js",
     "start:web": "npm --prefix web-app run dev",
     "build:web": "npm --prefix web-app run build",
-    "health:gateway": "node -e \"fetch('http://localhost:5100/health').then(r=>r.json()).then(console.log)\""
+    "health:gateway": "node -e \"fetch('http://localhost:5100/health').then(r=>r.json()).then(console.log)\"",
+    "wake:hosted": "node scripts/wake-hosted-services.js"
   },
   "dependencies": {
     "axios": "^1.7.9",
