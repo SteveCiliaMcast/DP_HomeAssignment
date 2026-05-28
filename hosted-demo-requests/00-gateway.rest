@@ -1,0 +1,75 @@
+@gatewayUrl = https://cab-api-gateway-63vc.onrender.com
+@demoEmail = gateway-demo-1779963913@example.com
+@password = Password123
+
+### 1. Gateway health
+GET {{gatewayUrl}}/health
+
+### 2. Gateway root - shows downstream service URLs
+GET {{gatewayUrl}}/
+
+### 3. Register through gateway
+# @name gatewayRegister
+POST {{gatewayUrl}}/api/customers/register
+Content-Type: application/json
+
+{
+  "firstName": "Gateway",
+  "surname": "Demo",
+  "email": "{{demoEmail}}",
+  "password": "{{password}}"
+}
+
+### 4. Login through gateway
+# @name gatewayLogin
+POST {{gatewayUrl}}/api/customers/login
+Content-Type: application/json
+
+{
+  "email": "{{demoEmail}}",
+  "password": "{{password}}"
+}
+
+### 5. Create booking through gateway
+# @name gatewayBooking
+POST {{gatewayUrl}}/api/bookings
+Content-Type: application/json
+
+{
+  "userId": "{{gatewayRegister.response.body.$.data.userId}}",
+  "startingLocation": "Valletta",
+  "endingLocation": "Sliema",
+  "bookingDateTime": "2026-06-07T18:30:00.000Z",
+  "passengers": 2,
+  "cabType": "Premium"
+}
+
+### 6. Pay booking through gateway
+# @name gatewayPayment
+POST {{gatewayUrl}}/api/payments
+Content-Type: application/json
+
+{
+  "userId": "{{gatewayRegister.response.body.$.data.userId}}",
+  "bookingId": "{{gatewayBooking.response.body.$.data.bookingId}}",
+  "useDiscount": false
+}
+
+### 7. Add favourite location through gateway
+# @name gatewayLocation
+POST {{gatewayUrl}}/api/locations
+Content-Type: application/json
+
+{
+  "userId": "{{gatewayRegister.response.body.$.data.userId}}",
+  "label": "Home",
+  "address": "Valletta",
+  "latitude": 35.8989,
+  "longitude": 14.5146
+}
+
+### 8. Get weather through gateway
+GET {{gatewayUrl}}/api/locations/{{gatewayLocation.response.body.$.data.locationId}}/weather
+
+### 9. Get notifications through gateway
+GET {{gatewayUrl}}/api/customers/{{gatewayRegister.response.body.$.data.userId}}/notifications

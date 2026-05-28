@@ -1,0 +1,26 @@
+@fareUrl = https://cab-fare-service-d8rj.onrender.com
+
+### 1. Fare service health
+GET {{fareUrl}}/health
+
+### 2. Estimate fare using location names
+POST {{fareUrl}}/fares/estimate
+Content-Type: application/json
+
+{
+  "startingLocation": "Valletta",
+  "endingLocation": "Sliema"
+}
+
+### 3. Estimate fare using latitude and longitude
+POST {{fareUrl}}/fares/estimate
+Content-Type: application/json
+
+{
+  "startingLocation": "Valletta",
+  "endingLocation": "Sliema",
+  "depLat": 35.8989,
+  "depLng": 14.5146,
+  "arrLat": 35.9122,
+  "arrLng": 14.5042
+}

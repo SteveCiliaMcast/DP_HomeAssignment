@@ -1,0 +1,52 @@
+@customerUrl = https://cab-customer-service.onrender.com
+@locationUrl = https://cab-location-service-favf.onrender.com
+@demoEmail = location-demo-{{$timestamp}}@example.com
+@password = Password123
+
+### 1. Location service health
+GET {{locationUrl}}/health
+
+### 2. Register customer needed for location validation
+# @name locationDemoCustomer
+POST {{customerUrl}}/customers/register
+Content-Type: application/json
+
+{
+  "firstName": "Location",
+  "surname": "Demo",
+  "email": "{{demoEmail}}",
+  "password": "{{password}}"
+}
+
+### 3. Add favourite pickup location
+# @name addLocation
+POST {{locationUrl}}/locations
+Content-Type: application/json
+
+{
+  "userId": "{{locationDemoCustomer.response.body.$.data.userId}}",
+  "label": "Home",
+  "address": "Valletta",
+  "latitude": 35.8989,
+  "longitude": 14.5146
+}
+
+### 4. Get user favourite pickup locations
+GET {{locationUrl}}/locations/user/{{locationDemoCustomer.response.body.$.data.userId}}
+
+### 5. Update favourite pickup location
+PUT {{locationUrl}}/locations/{{addLocation.response.body.$.data.locationId}}
+Content-Type: application/json
+
+{
+  "label": "Work",
+  "address": "Sliema",
+  "latitude": 35.9122,
+  "longitude": 14.5042
+}
+
+### 6. Get weather for favourite pickup location
+GET {{locationUrl}}/locations/{{addLocation.response.body.$.data.locationId}}/weather
+
+### 7. Delete favourite pickup location
+DELETE {{locationUrl}}/locations/{{addLocation.response.body.$.data.locationId}}

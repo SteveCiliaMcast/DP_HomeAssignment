@@ -1,0 +1,50 @@
+@customerUrl = https://cab-customer-service.onrender.com
+@bookingUrl = https://cab-booking-service-3x3x.onrender.com
+@demoEmail = booking-demo-{{$timestamp}}@example.com
+@password = Password123
+
+### 1. Booking service health
+GET {{bookingUrl}}/health
+
+### 2. Register customer needed for booking validation
+# @name bookingDemoCustomer
+POST {{customerUrl}}/customers/register
+Content-Type: application/json
+
+{
+  "firstName": "Booking",
+  "surname": "Demo",
+  "email": "{{demoEmail}}",
+  "password": "{{password}}"
+}
+
+### 3. Create booking
+# @name createBooking
+POST {{bookingUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": "{{bookingDemoCustomer.response.body.$.data.userId}}",
+  "startingLocation": "Valletta",
+  "endingLocation": "Sliema",
+  "bookingDateTime": "2026-06-07T18:30:00.000Z",
+  "passengers": 2,
+  "cabType": "Economic"
+}
+
+### 4. Get booking details
+GET {{bookingUrl}}/bookings/{{createBooking.response.body.$.data.bookingId}}
+
+### 5. Get current bookings
+GET {{bookingUrl}}/bookings/current/{{bookingDemoCustomer.response.body.$.data.userId}}
+
+### 6. Mark booking completed
+PATCH {{bookingUrl}}/bookings/{{createBooking.response.body.$.data.bookingId}}/status
+Content-Type: application/json
+
+{
+  "status": "completed"
+}
+
+### 7. Get past bookings
+GET {{bookingUrl}}/bookings/past/{{bookingDemoCustomer.response.body.$.data.userId}}

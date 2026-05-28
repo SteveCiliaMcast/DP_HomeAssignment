@@ -1,0 +1,98 @@
+@customerUrl = https://cab-customer-service.onrender.com
+@bookingUrl = https://cab-booking-service-3x3x.onrender.com
+@paymentUrl = https://cab-payment-service-1zxu.onrender.com
+@demoEmail = events-demo-{{$timestamp}}@example.com
+@password = Password123
+
+### 1. Register customer for event demo
+# @name eventCustomer
+POST {{customerUrl}}/customers/register
+Content-Type: application/json
+
+{
+  "firstName": "Event",
+  "surname": "Demo",
+  "email": "{{demoEmail}}",
+  "password": "{{password}}"
+}
+
+### 2. Create first booking
+# @name eventBookingOne
+POST {{bookingUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": "{{eventCustomer.response.body.$.data.userId}}",
+  "startingLocation": "Valletta",
+  "endingLocation": "Sliema",
+  "bookingDateTime": "2026-06-07T18:30:00.000Z",
+  "passengers": 2,
+  "cabType": "Economic"
+}
+
+### 3. Pay first booking
+POST {{paymentUrl}}/payments
+Content-Type: application/json
+
+{
+  "userId": "{{eventCustomer.response.body.$.data.userId}}",
+  "bookingId": "{{eventBookingOne.response.body.$.data.bookingId}}",
+  "useDiscount": false
+}
+
+### 4. Create second booking
+# @name eventBookingTwo
+POST {{bookingUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": "{{eventCustomer.response.body.$.data.userId}}",
+  "startingLocation": "Valletta",
+  "endingLocation": "Mdina",
+  "bookingDateTime": "2026-06-08T18:30:00.000Z",
+  "passengers": 2,
+  "cabType": "Premium"
+}
+
+### 5. Pay second booking
+POST {{paymentUrl}}/payments
+Content-Type: application/json
+
+{
+  "userId": "{{eventCustomer.response.body.$.data.userId}}",
+  "bookingId": "{{eventBookingTwo.response.body.$.data.bookingId}}",
+  "useDiscount": false
+}
+
+### 6. Create third booking
+# @name eventBookingThree
+POST {{bookingUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": "{{eventCustomer.response.body.$.data.userId}}",
+  "startingLocation": "Sliema",
+  "endingLocation": "Valletta",
+  "bookingDateTime": "2026-06-09T18:30:00.000Z",
+  "passengers": 2,
+  "cabType": "Executive"
+}
+
+### 7. Pay third booking - should make discount available
+POST {{paymentUrl}}/payments
+Content-Type: application/json
+
+{
+  "userId": "{{eventCustomer.response.body.$.data.userId}}",
+  "bookingId": "{{eventBookingThree.response.body.$.data.bookingId}}",
+  "useDiscount": false
+}
+
+### 8. Check customer discount state
+GET {{customerUrl}}/customers/{{eventCustomer.response.body.$.data.userId}}
+
+### 9. Check notifications - should include discount notification
+GET {{customerUrl}}/customers/{{eventCustomer.response.body.$.data.userId}}/notifications
+
+### 10. Wait for CAB_READY_DELAY_MS, then run this again for cab-ready notifications
+GET {{customerUrl}}/customers/{{eventCustomer.response.body.$.data.userId}}/notifications

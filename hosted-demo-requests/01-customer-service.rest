@@ -1,0 +1,51 @@
+@customerUrl = https://cab-customer-service.onrender.com
+@demoEmail = customer-demo-{{$timestamp}}@example.com
+@password = Password123
+
+### 1. Customer service health
+GET {{customerUrl}}/health
+
+### 2. Register customer
+# @name registerCustomer
+POST {{customerUrl}}/customers/register
+Content-Type: application/json
+
+{
+  "firstName": "Customer",
+  "surname": "Demo",
+  "email": "{{demoEmail}}",
+  "password": "{{password}}"
+}
+
+### 3. Login customer
+# @name loginCustomer
+POST {{customerUrl}}/customers/login
+Content-Type: application/json
+
+{
+  "email": "{{demoEmail}}",
+  "password": "{{password}}"
+}
+
+### 4. Get customer account details
+GET {{customerUrl}}/customers/{{registerCustomer.response.body.$.data.userId}}
+
+### 5. Create a demo notification
+# @name createNotification
+POST {{customerUrl}}/customers/{{registerCustomer.response.body.$.data.userId}}/notifications
+Content-Type: application/json
+
+{
+  "type": "DEMO",
+  "title": "Demo notification",
+  "message": "This notification was created during the video demonstration.",
+  "metadata": {
+    "source": "hosted-demo-rest"
+  }
+}
+
+### 6. List notifications
+GET {{customerUrl}}/customers/{{registerCustomer.response.body.$.data.userId}}/notifications
+
+### 7. Mark notification as read
+PATCH {{customerUrl}}/customers/{{registerCustomer.response.body.$.data.userId}}/notifications/{{createNotification.response.body.$.data.notificationId}}/read

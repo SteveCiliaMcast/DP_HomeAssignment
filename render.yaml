@@ -48,15 +48,9 @@ services:
       - key: MONGODB_DB_NAME
         value: Cab_booking_Assignment
       - key: CUSTOMER_SERVICE_URL
-        fromService:
-          type: web
-          name: cab-customer-service
-          property: hostport
+        sync: false
       - key: FARE_SERVICE_URL
-        fromService:
-          type: web
-          name: cab-fare-service
-          property: hostport
+        sync: false
       - key: CAB_READY_DELAY_MS
         value: 180000
 
@@ -75,15 +69,9 @@ services:
       - key: MONGODB_DB_NAME
         value: Cab_booking_Assignment
       - key: CUSTOMER_SERVICE_URL
-        fromService:
-          type: web
-          name: cab-customer-service
-          property: hostport
+        sync: false
       - key: BOOKING_SERVICE_URL
-        fromService:
-          type: web
-          name: cab-booking-service
-          property: hostport
+        sync: false
 
   - type: web
     name: cab-location-service
@@ -100,10 +88,7 @@ services:
       - key: MONGODB_DB_NAME
         value: Cab_booking_Assignment
       - key: CUSTOMER_SERVICE_URL
-        fromService:
-          type: web
-          name: cab-customer-service
-          property: hostport
+        sync: false
       - key: RAPIDAPI_KEY
         sync: false
       - key: WEATHER_API_HOST
@@ -122,27 +107,12 @@ services:
       - key: NODE_ENV
         value: production
       - key: CUSTOMER_SERVICE_URL
-        fromService:
-          type: web
-          name: cab-customer-service
-          property: hostport
+        sync: false
       - key: BOOKING_SERVICE_URL
-        fromService:
-          type: web
-          name: cab-booking-service
-          property: hostport
+        sync: false
       - key: PAYMENT_SERVICE_URL
-        fromService:
-          type: web
-          name: cab-payment-service
-          property: hostport
+        sync: false
       - key: FARE_SERVICE_URL
-        fromService:
-          type: web
-          name: cab-fare-service
-          property: hostport
+        sync: false
       - key: LOCATION_SERVICE_URL
-        fromService:
-          type: web
-          name: cab-location-service
-          property: hostport
+        sync: false

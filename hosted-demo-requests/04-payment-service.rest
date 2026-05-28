@@ -1,0 +1,51 @@
+@customerUrl = https://cab-customer-service.onrender.com
+@bookingUrl = https://cab-booking-service-3x3x.onrender.com
+@paymentUrl = https://cab-payment-service-1zxu.onrender.com
+@demoEmail = payment-demo-{{$timestamp}}@example.com
+@password = Password123
+
+### 1. Payment service health
+GET {{paymentUrl}}/health
+
+### 2. Register customer needed for booking and payment
+# @name paymentDemoCustomer
+POST {{customerUrl}}/customers/register
+Content-Type: application/json
+
+{
+  "firstName": "Payment",
+  "surname": "Demo",
+  "email": "{{demoEmail}}",
+  "password": "{{password}}"
+}
+
+### 3. Create booking to pay
+# @name paymentDemoBooking
+POST {{bookingUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": "{{paymentDemoCustomer.response.body.$.data.userId}}",
+  "startingLocation": "Valletta",
+  "endingLocation": "Sliema",
+  "bookingDateTime": "2026-06-07T18:30:00.000Z",
+  "passengers": 2,
+  "cabType": "Executive"
+}
+
+### 4. Pay booking without discount
+# @name paymentWithoutDiscount
+POST {{paymentUrl}}/payments
+Content-Type: application/json
+
+{
+  "userId": "{{paymentDemoCustomer.response.body.$.data.userId}}",
+  "bookingId": "{{paymentDemoBooking.response.body.$.data.bookingId}}",
+  "useDiscount": false
+}
+
+### 5. Get payment details
+GET {{paymentUrl}}/payments/{{paymentWithoutDiscount.response.body.$.data.paymentId}}
+
+### 6. Get user payment history
+GET {{paymentUrl}}/payments/user/{{paymentDemoCustomer.response.body.$.data.userId}}
