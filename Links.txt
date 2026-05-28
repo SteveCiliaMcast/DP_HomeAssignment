@@ -1,0 +1,12 @@
+Please not the Hosted URL used Renderer. With this if the apis are not used in 1/5 min they got to sleep and need to be awake again. So you might have to wait a couple of minutes before you get the working website.
+
+VIDEO DEMO = https://mcastedu.sharepoint.com/:v:/s/SelfInterviewRecording/IQAj950oTy8vTJoSfXYbqDA0AZacwm_9-laTnNZZ5MtPOQo?e=gncmeF&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D
+HOSTED URL = https://dp-home-assignment.vercel.app
+GIT Repo   = https://github.com/SteveCiliaMcast/DP_HomeAssignment
+
+https://cab-booking-service-3x3x.onrender.com
+https://cab-payment-service-1zxu.onrender.com
+https://cab-location-service-favf.onrender.com
+https://cab-fare-service-d8rj.onrender.com
+https://cab-customer-service.onrender.com
+https://cab-booking-service-3x3x.onrender.com
